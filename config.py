@@ -1,2 +1,4 @@
-BINANCE_API_KEY = 'yourbinanceapikey'
-BINANCE_SECRET_KEY = 'yourbinancesecretkey'
+BITPANDA_API_KEY = ''
+ALPACA_BASE_URL = ''
+ALPCACA_API_KEY = ''
+ALPACA_SECRET_KEY = ''
