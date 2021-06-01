@@ -2,6 +2,10 @@ import ccxt
 import config
 import schedule
 import pandas as pd
+import winsound
+
+duration = 1000  # milliseconds
+freq = 440  # Hz
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -18,6 +22,9 @@ import time
 exchange = ccxt.bitpanda({
     "apiKey": config.BITPANDA_API_KEY
 })
+
+MIN_WIN = 0.02
+TRADE_INVESTMENT_ETH = 0.02
 
 
 def tr(data):
@@ -38,7 +45,7 @@ def atr(data, period):
     return atr
 
 
-def supertrend(df, period=60, atr_multiplier=3):
+def supertrend(df, period=14, atr_multiplier=3):
     hl2 = (df['high'] + df['low']) / 2
     df['atr'] = atr(df, period)
     df['upperband'] = hl2 + (atr_multiplier * df['atr'])
@@ -64,34 +71,47 @@ def supertrend(df, period=60, atr_multiplier=3):
     return df
 
 
-in_position = False
+IN_POSITION = False
 
 
 def check_buy_sell_signals(df):
-    global in_position
-
+    global IN_POSITION
     print("checking for buy and sell signals")
     print(df.tail(5))
+
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
+    ethereum_ticker = exchange.fetch_ticker('ETH/EUR')
+    mid_price_euro = (float(ethereum_ticker['ask']) + float(ethereum_ticker['bid'])) / 2
+
+    print(f"in position: {IN_POSITION}")
+
     if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
         print("changed to uptrend, buy")
-        if not in_position:
-            order = exchange.create_market_buy_order('ETH/EUR', 0.02)
+        if not IN_POSITION:
+            order = exchange.create_market_buy_order('ETH/EUR', TRADE_INVESTMENT_ETH)
+            winsound.Beep(freq, duration)
             print(order)
-            in_position = True
+            IN_POSITION = True
+            target_price_eur = mid_price_euro * (1 + MIN_WIN)
+            print(f"In Trade!")
+            print(f"Target price: {target_price_eur}")
         else:
             print("already in position, nothing to do")
 
     if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-        if in_position:
-            print("changed to downtrend, sell")
-            order = exchange.create_market_sell_order('ETH/EUR', 0.02)
-            print(order)
-            in_position = False
+        if IN_POSITION:
+            if df['close'][last_row_index] >= target_price_eur:
+                print("changed to downtrend, sell")
+                order = exchange.create_market_sell_order('ETH/EUR', TRADE_INVESTMENT_ETH)
+                winsound.Beep(freq, duration)
+                print(order)
+                IN_POSITION = False
         else:
             print("You aren't in position, nothing to sell")
+    last_trade = exchange.fetch_my_trades(symbol='ETH/EUR')[-1]
+    print(f"last trade: {last_trade}")
 
 
 def run_bot():
@@ -102,13 +122,9 @@ def run_bot():
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     supertrend_data = supertrend(df)
-    print(supertrend_data[columns + ['atr', 'in_uptrend']])
 
-    # check_buy_sell_signals(supertrend_data)
+    check_buy_sell_signals(supertrend_data)
 
-def stop_bot(request):
-
-    pass
 
 schedule.every(2).seconds.do(run_bot)
 
