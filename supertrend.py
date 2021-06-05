@@ -2,10 +2,10 @@ import ccxt
 import config
 import schedule
 import pandas as pd
-import winsound
-
-duration = 1000  # milliseconds
-freq = 440  # Hz
+# import winsound
+#
+# duration = 1000  # milliseconds
+# freq = 440  # Hz
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -91,7 +91,7 @@ def check_buy_sell_signals(df):
         print("changed to uptrend, buy")
         if not IN_POSITION:
             order = exchange.create_market_buy_order('ETH/EUR', TRADE_INVESTMENT_ETH)
-            winsound.Beep(freq, duration)
+            # winsound.Beep(freq, duration)
             print(order)
             IN_POSITION = True
             target_price_eur = mid_price_euro * (1 + MIN_WIN)
@@ -105,7 +105,7 @@ def check_buy_sell_signals(df):
             if df['close'][last_row_index] >= target_price_eur:
                 print("changed to downtrend, sell")
                 order = exchange.create_market_sell_order('ETH/EUR', TRADE_INVESTMENT_ETH)
-                winsound.Beep(freq, duration)
+                # winsound.Beep(freq, duration)
                 print(order)
                 IN_POSITION = False
         else:

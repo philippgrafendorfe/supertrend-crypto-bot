@@ -1,5 +1,3 @@
-import time
-
 import schedule
 
 import config
