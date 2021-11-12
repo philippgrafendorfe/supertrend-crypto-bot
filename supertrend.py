@@ -25,9 +25,7 @@ exchange = ccxt.bitpanda({
 
 MIN_WIN = 0.02
 TRADE_INVESTMENT_ETH = 0.02
-# hallo, ich bin omar
 
-# Nummer 068120214591
 def tr(data):
     data['previous_close'] = data['close'].shift(1)
     data['high-low'] = abs(data['high'] - data['low'])
