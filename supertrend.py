@@ -2,6 +2,7 @@ import ccxt
 import config
 import schedule
 import pandas as pd
+
 # import winsound
 #
 # duration = 1000  # milliseconds
@@ -20,11 +21,13 @@ from datetime import datetime
 import time
 
 exchange = ccxt.bitpanda({
-    "apiKey": config.BITPANDA_API_KEY
+    "apiKey": config.BITPANDA_API_KEY_OMAR
 })
+
 
 MIN_WIN = 0.02
 TRADE_INVESTMENT_ETH = 0.02
+
 
 def tr(data):
     data['previous_close'] = data['close'].shift(1)
@@ -109,8 +112,8 @@ def check_buy_sell_signals(df):
                 IN_POSITION = False
         else:
             print("You aren't in position, nothing to sell")
-    last_trade = exchange.fetch_my_trades(symbol='ETH/EUR')[-1]
-    print(f"last trade: {last_trade}")
+    # last_trade = exchange.fetch_my_trades(symbol='ETH/EUR')[-1]
+    # print(f"last trade: {last_trade}")
 
 
 def run_bot():
