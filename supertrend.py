@@ -14,14 +14,14 @@ pd.set_option('display.expand_frame_repr', False)
 
 import warnings
 
-warnings.filterwarnings('ignore')
+# warnings.filterwarnings('ignore')
 
 import numpy as np
 from datetime import datetime
 import time
 
 exchange = ccxt.bitpanda({
-    "apiKey": config.BITPANDA_API_KEY_OMAR
+    "apiKey": config.BITP
 })
 
 

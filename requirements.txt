@@ -1,5 +1,6 @@
 ta
-schedule
-ccxt
-pandas
-numpy
+schedule~=1.1.0
+ccxt~=1.74.35
+pandas~=1.2.4
+numpy~=1.20.3
+pydantic~=1.9.0
