@@ -34,7 +34,7 @@ def main(cfg: DictConfig):
                         trading_strategy=strategy,
                         depot=depot,
                         symbol=cfg.symbol)
-    log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: Minuets.")
+    log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: minutes.")
     schedule.every(cfg.bot_run_period).minutes.do(bot.run)
 
     while True:
@@ -44,3 +44,8 @@ def main(cfg: DictConfig):
 
 if __name__ == "__main__":
     main()
+
+
+# todo ich will mein Depot verfolgen können. Dafür könnte man den Bot in der Depot schreiben lassen.
+# ein Depot kann sich entwickeln. dazu speichern wir immer den startwert und den aktuellen Wert.
+# todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
