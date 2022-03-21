@@ -6,3 +6,5 @@ legacy/config.py
 /legacy/
 /outputs/
 /doc/
+**outputs/
+/dev/

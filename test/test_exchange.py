@@ -1,11 +1,8 @@
 import unittest
 from abc import ABC, abstractmethod
-import hydra
 from hydra import initialize, compose
-from hydra.core.config_store import ConfigStore
 
-from config.config import TestExchangeConfig
-from exchange import Exchange, Bitpanda
+from Exchange.exchange import Bitpanda
 
 
 # cs = ConfigStore.instance()

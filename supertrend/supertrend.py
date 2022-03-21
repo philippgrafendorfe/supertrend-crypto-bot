@@ -1,0 +1,46 @@
+import logging
+import time
+
+import ccxt
+import hydra
+from omegaconf import DictConfig
+
+import pandas as pd
+import schedule
+from Depot.depot import Depot
+from Strategy.SuperTrend import SuperTrendTradingStrategy
+from Bot.trading_bot import SuperTrendBot
+
+log = logging.getLogger(__name__)
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.expand_frame_repr', False)
+
+
+@hydra.main(config_path="../config", config_name="config")
+def main(cfg: DictConfig):
+    exchange = ccxt.bitpanda({"apiKey": cfg.bitpanda_api_key})
+    strategy = SuperTrendTradingStrategy(timeframe=cfg.timeframe,
+                                         limit=cfg.limit,
+                                         atr_period=cfg.atr_period,
+                                         atr_multiplier=cfg.atr_multiplier,
+                                         relative_gain=cfg.relative_gain)
+    log.info(f"Initiating trading bot with trading strategy:")
+    log.info(strategy)
+    depot = Depot(size=cfg.position_bet_EUR)
+    log.info(f"Depot size: {depot.size}, depot currency: {depot.currency}.")
+    bot = SuperTrendBot(exchange=exchange,
+                        trading_strategy=strategy,
+                        depot=depot,
+                        symbol=cfg.symbol)
+    log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: Minuets.")
+    schedule.every(cfg.bot_run_period).minutes.do(bot.run)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    main()

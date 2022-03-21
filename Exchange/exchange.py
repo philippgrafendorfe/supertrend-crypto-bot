@@ -4,10 +4,6 @@ from typing import List, Optional, Union, Dict
 import ccxt
 from pydantic import BaseModel
 
-from utils import get_logger
-
-logger = get_logger(__name__)
-
 
 class ExchangeConnectionError(Exception):
     """Custom Error that is raised when an exchange is not connected."""
