@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 from ccxt import Exchange
@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 
 @dataclass
-class SuperTrendTradingStrategy(TradingStrategy):
+class SuperTrendTradingStrategy:
     """This is a variant of supertrend where a buy signal is ussed if there is at least one
     positive position in the balance sheet and sold if a specific return was reached."""
 
@@ -24,14 +24,37 @@ class SuperTrendTradingStrategy(TradingStrategy):
     atr_period: int
     atr_multiplier: float
     relative_gain: float
+    position: bool = False
 
-    def should_buy(self, prices: List[float]) -> bool:
+    def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
 
-        pass
+        last_row_index = len(prices.index) - 1
+        previous_row_index = last_row_index - 1
 
-    def should_sell(self, prices: List[float]) -> bool:
+        if not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]:
+            log.info("changed to uptrend, buy")
+            if not position:
 
-        pass
+                self.position = True
+                return True
+            else:
+                log.info("already in position, nothing to do")
+                return False
+
+    def should_sell(self, prices: Union[pd.DataFrame, List[float]], position: bool, target_depot_price: float) -> bool:
+
+        last_row_index = len(prices.index) - 1
+        previous_row_index = last_row_index - 1
+
+        if prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index] and prices['close'][
+            last_row_index] >= target_depot_price:
+            if position:
+
+                self.position = False
+                return True
+            else:
+                log.info("You aren't in position, nothing to sell")
+                return False
 
     def supertrend(self, data: pd.DataFrame) -> pd.DataFrame:
         df = data.copy()
@@ -75,38 +98,25 @@ class SuperTrendTradingStrategy(TradingStrategy):
 
         return tr
 
-    def check_buy_sell_signals(self, df: pd.DataFrame, exchange: Exchange, position: bool) -> bool:
+    def check_buy_sell_signals(self
+                               , df: pd.DataFrame
+                               , position: bool
+                               , actual_depot_price: float) -> str:
 
         log.info("checking for buy and sell signals")
-        # log.info(df.tail(5))
-
-        last_row_index = len(df.index) - 1
-        previous_row_index = last_row_index - 1
-
-        # ethereum_ticker = exchange.fetch_ticker('ETH/EUR')
-        # mid_price_euro = (float(ethereum_ticker['ask']) + float(ethereum_ticker['bid'])) / 2
 
         log.info(f"in position: {position}")
 
-        if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-            log.info("changed to uptrend, buy")
-            if not position:
-                log.info(f"Buy BTC for 100 bugs.")
-                # order = exchange.create_market_buy_order("BTC/EUR", 100)
-                # log.info(order)
-                position = True
-                log.info(f"In Trade!")
-            else:
-                log.info("already in position, nothing to do")
+        should_buy = self.should_buy(prices=df, position=position)
 
-        if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-            if position:
-                # if df['close'][last_row_index] >= target_price_eur:
-                log.info("changed to downtrend, sell")
-                # order = exchange.create_market_sell_order('ETH/EUR', 100)
-                # log.info(order)
-                position = False
-            else:
-                log.info("You aren't in position, nothing to sell")
+        if should_buy:
+            return "Buy"
 
-        return position
+        target_depot_price = actual_depot_price * (1 + self.relative_gain)
+        should_sell = self.should_sell(prices=df, position=position, target_depot_price=target_depot_price)
+
+        if should_sell:
+            return "Sell"
+
+        else:
+            return "Nothing to do"

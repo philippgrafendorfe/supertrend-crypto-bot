@@ -6,8 +6,10 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Depot:
-    size: float
+    start: float
+    actual: float
     currency: str = "EUR"
+
 
 
 def main():

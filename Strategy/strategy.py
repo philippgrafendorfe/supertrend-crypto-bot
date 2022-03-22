@@ -2,7 +2,7 @@ import logging
 import statistics
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 from ccxt import Exchange
@@ -13,11 +13,11 @@ log = logging.getLogger(__name__)
 class TradingStrategy(ABC):
 
     @abstractmethod
-    def should_buy(self, prices: List[float]) -> bool:
+    def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
         """Whether you should buy this coin given the prices."""
 
     @abstractmethod
-    def should_sell(self, prices: List[float]) -> bool:
+    def should_sell(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
         """Whether you should sell this coin given the prices."""
 
 
