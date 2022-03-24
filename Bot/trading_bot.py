@@ -63,11 +63,11 @@ class SuperTrendBot(TradingBot):
             log.info(f"{result} {self.symbol}!!!!!!")
             market_data = self.exchange.fetch_ticker(symbol=self.symbol)
             price = market_data["close"]
-            volume = self.depot.current_value / price
+            amount = self.depot.current_value / price
 
             order = self.exchange.create_market_order(symbol=self.symbol
                                                       , side=result
-                                                      , amount=volume
+                                                      , amount=amount
                                                       , price=price
                                                       )
             time.sleep(30)
@@ -75,9 +75,9 @@ class SuperTrendBot(TradingBot):
                 log.info(f"Order with id {order['id']} not yet closed.")
                 time.sleep(30)
             log.info(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
-            volume = price * order['amount']
-            fee = self.taker_fee * volume
-            log.info(f"Last trade fee: {fee} €.")
+            amount = price * order['amount']
+            net_amount = (1 - self.taker_fee) * amount
+            log.info(f"Last trade fee: {amount - net_amount} €.")
             # todo calculate fees
-            self.depot.current_value = volume
+            self.depot.current_value = net_amount
             self.in_position = result == "BUY"
