@@ -58,3 +58,4 @@ if __name__ == "__main__":
 # todo die config objektorientierter machen
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
 # todo highlight logging with colors
+# todo run in docker container
