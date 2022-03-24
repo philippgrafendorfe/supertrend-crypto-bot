@@ -28,8 +28,8 @@ def main(cfg: DictConfig):
                                          relative_gain=cfg.relative_gain)
     log.info(f"Initiating trading bot with trading strategy:")
     log.info(strategy)
-    depot = Depot(start=cfg.position_bet_EUR, actual=cfg.position_bet_EUR)
-    log.info(f"Depot size: {depot.start}, depot currency: {depot.currency}.")
+    depot = Depot(start_value=cfg.position_bet_EUR, last_value=cfg.position_bet_EUR)
+    log.info(f"Depot size: {depot.start_value}, depot currency: {depot.currency}.")
     bot = SuperTrendBot(exchange=exchange,
                         trading_strategy=strategy,
                         depot=depot,
@@ -37,7 +37,7 @@ def main(cfg: DictConfig):
 
     log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: minutes.")
     bot.run()
-    schedule.every(cfg.bot_run_period).seconds.do(bot.run)
+    schedule.every(cfg.bot_run_period).minutes.do(bot.run)
 
     while True:
         schedule.run_pending()
@@ -47,10 +47,14 @@ def main(cfg: DictConfig):
 if __name__ == "__main__":
     main()
 
-
+# todo make bot running in production
 # todo ich will mein Depot verfolgen können. Dafür könnte man den Bot in der Depot schreiben lassen.
 # ein Depot kann sich entwickeln. dazu speichern wir immer den startwert und den aktuellen Wert.
 # todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
 # todo get better and more informative bars by changing the smapling method
 # todo check vectorBT for an easier implementation
 # todo es gibt einen bug. das upperband wird nicht deterministisch berechnet.
+# todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
+# todo die config objektorientierter machen
+# todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
+# todo highlight logging with colors

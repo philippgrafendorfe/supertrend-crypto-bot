@@ -24,18 +24,17 @@ class SuperTrendTradingStrategy:
     atr_period: int
     atr_multiplier: float
     relative_gain: float
-    position: bool = False
+
+    # position: bool = False
 
     def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
 
+        # return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
-
         if not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]:
-            log.info("changed to uptrend, buy")
+            log.info("changed to uptrend, buy signal!")
             if not position:
-
-                self.position = True
                 return True
             else:
                 log.info("already in position, nothing to do")
@@ -49,8 +48,6 @@ class SuperTrendTradingStrategy:
         if prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index] and prices['close'][
             last_row_index] >= target_depot_price:
             if position:
-
-                self.position = False
                 return True
             else:
                 log.info("You aren't in position, nothing to sell")
@@ -110,13 +107,13 @@ class SuperTrendTradingStrategy:
         should_buy = self.should_buy(prices=df, position=position)
 
         if should_buy:
-            return "Buy"
+            return "BUY"
 
         target_depot_price = actual_depot_price * (1 + self.relative_gain)
         should_sell = self.should_sell(prices=df, position=position, target_depot_price=target_depot_price)
 
         if should_sell:
-            return "Sell"
+            return "SELL"
 
         else:
             return "Nothing to do"
