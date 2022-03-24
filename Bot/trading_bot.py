@@ -11,6 +11,7 @@ from Depot.depot import Depot
 from Strategy.SuperTrend import SuperTrendTradingStrategy
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 @dataclass
@@ -60,7 +61,7 @@ class SuperTrendBot(TradingBot):
             log.info(f"Nothing to do.")
 
         else:
-            log.info(f"{result} {self.symbol}!!!!!!")
+            log.warning(f"{result} {self.symbol}!!!!!!")
             market_data = self.exchange.fetch_ticker(symbol=self.symbol)
             price = market_data["close"]
             volume = self.depot.current_value / price
@@ -74,10 +75,9 @@ class SuperTrendBot(TradingBot):
             while self.exchange.fetch_order_status(id=order["id"]) != "closed":
                 log.info(f"Order with id {order['id']} not yet closed.")
                 time.sleep(30)
-            log.info(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
+            log.warning(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
             volume = price * order['amount']
             fee = self.taker_fee * volume
             log.info(f"Last trade fee: {fee} €.")
-            # todo calculate fees
             self.depot.current_value = volume
             self.in_position = result == "BUY"
