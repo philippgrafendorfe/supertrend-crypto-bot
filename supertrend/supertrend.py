@@ -48,7 +48,6 @@ def main(cfg: DictConfig):
 if __name__ == "__main__":
     main()
 
-# todo make bot running in production
 # todo ich will mein Depot verfolgen können. Dafür könnte man den Bot in der Depot schreiben lassen.
 # ein Depot kann sich entwickeln. dazu speichern wir immer den startwert und den aktuellen Wert.
 # todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
@@ -57,5 +56,4 @@ if __name__ == "__main__":
 # todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
 # todo die config objektorientierter machen
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
-# todo highlight logging with colors
 # todo run in docker container

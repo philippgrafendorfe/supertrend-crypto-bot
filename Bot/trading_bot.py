@@ -71,7 +71,6 @@ class SuperTrendBot:
             amount = price * order['amount']
             net_amount = (1 - self.taker_fee) * amount
             log.info(f"Last trade fee: {amount - net_amount} €.")
-            # todo calculate fees
             self.depot.current_value = net_amount
             self.last_base_price = price
             self.in_position = result == "BUY"
