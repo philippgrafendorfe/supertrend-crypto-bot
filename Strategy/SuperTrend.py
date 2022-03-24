@@ -25,8 +25,6 @@ class SuperTrendTradingStrategy:
     atr_multiplier: float
     relative_gain: float
 
-    # position: bool = False
-
     def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
 
         # return True
@@ -42,6 +40,7 @@ class SuperTrendTradingStrategy:
 
     def should_sell(self, prices: Union[pd.DataFrame, List[float]], position: bool, target_depot_price: float) -> bool:
 
+        # return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
 

@@ -28,12 +28,13 @@ def main(cfg: DictConfig):
                                          relative_gain=cfg.relative_gain)
     log.info(f"Initiating trading bot with trading strategy:")
     log.info(strategy)
-    depot = Depot(start_value=cfg.position_bet_EUR, last_value=cfg.position_bet_EUR)
+    depot = Depot(start_value=cfg.position_bet_EUR, current_value=cfg.position_bet_EUR)
     log.info(f"Depot size: {depot.start_value}, depot currency: {depot.currency}.")
     bot = SuperTrendBot(exchange=exchange,
                         trading_strategy=strategy,
                         depot=depot,
-                        symbol=cfg.symbol)
+                        symbol=cfg.symbol,
+                        taker_fee=0.0015)
 
     log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: minutes.")
     bot.run()
@@ -53,7 +54,6 @@ if __name__ == "__main__":
 # todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
 # todo get better and more informative bars by changing the smapling method
 # todo check vectorBT for an easier implementation
-# todo es gibt einen bug. das upperband wird nicht deterministisch berechnet.
 # todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
 # todo die config objektorientierter machen
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.

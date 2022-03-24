@@ -9,7 +9,6 @@ from ccxt import bitpanda
 
 from Depot.depot import Depot
 from Strategy.SuperTrend import SuperTrendTradingStrategy
-from Exchange.exchange import Exchange
 
 log = logging.getLogger(__name__)
 
@@ -29,10 +28,8 @@ class SuperTrendBot(TradingBot):
     trading_strategy: SuperTrendTradingStrategy
     depot: Depot
     symbol: str
-    position_amount: float = 0.0
+    taker_fee: float
     in_position: bool = False
-    last_acquisition_price: float = 0.0
-    last_base_amount: float = 0.0
 
     def run(self) -> None:
         log.info(f"Fetching new bars for {datetime.now().isoformat()}")
@@ -43,7 +40,7 @@ class SuperTrendBot(TradingBot):
 
         result = self.trading_strategy.check_buy_sell_signals(supertrend_data,
                                                               position=self.in_position,
-                                                              actual_depot_price=self.last_acquisition_price)
+                                                              actual_depot_price=self.depot.current_value)
 
         self.process_result(result=result)
 
@@ -58,42 +55,29 @@ class SuperTrendBot(TradingBot):
         return df
 
     def process_result(self, result):
-        if result == "BUY":
+
+        if not result in ("BUY", "SELL"):
+            log.info(f"Nothing to do.")
+
+        else:
             log.info(f"{result} {self.symbol}!!!!!!")
-            market_data = self.exchange.fetchTicker(symbol=self.symbol)
+            market_data = self.exchange.fetch_ticker(symbol=self.symbol)
             price = market_data["close"]
-            base_amount = self.depot.actual / price
+            volume = self.depot.current_value / price
 
             order = self.exchange.create_market_order(symbol=self.symbol
                                                       , side=result
-                                                      , amount=base_amount
+                                                      , amount=volume
                                                       , price=price
                                                       )
-            time.sleep(secs=30)
+            time.sleep(30)
             while self.exchange.fetch_order_status(id=order["id"]) != "closed":
                 log.info(f"Order with id {order['id']} not yet closed.")
-                time.sleep(secs=30)
-            log.info(f"Bought {self.position_amount} {self.symbol} for {price}: \n {order}")
-            self.last_base_amount = order["amount"]
-            self.last_acquisition_price = price
-
-            self.in_position = True
-        elif result == "SELL":
-            log.info(f"{result} {self.symbol}!!!!!!")
-            market_data = self.exchange.fetchTicker(symbol=self.symbol)
-            price = market_data["close"]
-            base_amount = self.depot.actual / price
-            order = self.exchange.create_market_order(symbol=self.symbol
-                                                      , side=result
-                                                      , amount=base_amount
-                                                      , price=price
-                                                      )
-
-            self.position_amount = 0.0
-            log.info(f"Order {order} transaction filled.")
-            self.depot.last_value = order["amount"]*order["price"]
-            self.in_position = False
-        else:
-            log.info(f"Nothing to do.")
-            # market_data = self.exchange.fetchTicker(symbol=self.symbol)
-            # log.info(f"Market data: \n {market_data}")
+                time.sleep(30)
+            log.info(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
+            volume = price * order['amount']
+            fee = self.taker_fee * volume
+            log.info(f"Last trade fee: {fee} €.")
+            # todo calculate fees
+            self.depot.current_value = volume
+            self.in_position = result == "BUY"
