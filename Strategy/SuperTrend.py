@@ -1,15 +1,11 @@
 import logging
+import warnings
 from dataclasses import dataclass
 from typing import List, Union
 
 import pandas as pd
-from ccxt import Exchange
-
-from Strategy.strategy import TradingStrategy
 
 log = logging.getLogger(__name__)
-
-import warnings
 
 warnings.filterwarnings('ignore')
 
@@ -25,20 +21,42 @@ class SuperTrendTradingStrategy:
     atr_multiplier: float
     relative_gain: float
 
-    def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
+    def check_buy_sell_signals(self
+                               , df: pd.DataFrame
+                               , position: bool
+                               , last_base_price: float) -> str:
+
+        log.info("checking for buy and sell signals")
+
+        log.info(f"in position: {position}")
+
+        if not position:
+            should_buy = self.should_buy(prices=df)
+            if should_buy:
+                return "BUY"
+
+        else:
+            target_depot_price = last_base_price * (1 + self.relative_gain)
+            should_sell = self.should_sell(prices=df, target_depot_price=target_depot_price)
+            if should_sell:
+                return "SELL"
+
+        return "WAIT"
+
+    @staticmethod
+    def should_buy(prices: Union[pd.DataFrame, List[float]]) -> bool:
 
         # return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
         if not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]:
             log.info("changed to uptrend, buy signal!")
-            if not position:
-                return True
-            else:
-                log.info("already in position, nothing to do")
-                return False
+            return True
+        else:
+            return False
 
-    def should_sell(self, prices: Union[pd.DataFrame, List[float]], position: bool, target_depot_price: float) -> bool:
+    @staticmethod
+    def should_sell(prices: Union[pd.DataFrame, List[float]], target_depot_price: float) -> bool:
 
         # return True
         last_row_index = len(prices.index) - 1
@@ -46,11 +64,9 @@ class SuperTrendTradingStrategy:
 
         if prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index] and prices['close'][
             last_row_index] >= target_depot_price:
-            if position:
-                return True
-            else:
-                log.info("You aren't in position, nothing to sell")
-                return False
+            return True
+        else:
+            return False
 
     def supertrend(self, data: pd.DataFrame) -> pd.DataFrame:
         df = data.copy()
@@ -84,7 +100,8 @@ class SuperTrendTradingStrategy:
 
         return atr
 
-    def tr(self, data):
+    @staticmethod
+    def tr(data):
         data['previous_close'] = data['close'].shift(1)
         data['high-low'] = abs(data['high'] - data['low'])
         data['high-pc'] = abs(data['high'] - data['previous_close'])
@@ -93,26 +110,3 @@ class SuperTrendTradingStrategy:
         tr = data[['high-low', 'high-pc', 'low-pc']].max(axis=1)
 
         return tr
-
-    def check_buy_sell_signals(self
-                               , df: pd.DataFrame
-                               , position: bool
-                               , actual_depot_price: float) -> str:
-
-        log.info("checking for buy and sell signals")
-
-        log.info(f"in position: {position}")
-
-        should_buy = self.should_buy(prices=df, position=position)
-
-        if should_buy:
-            return "BUY"
-
-        target_depot_price = actual_depot_price * (1 + self.relative_gain)
-        should_sell = self.should_sell(prices=df, position=position, target_depot_price=target_depot_price)
-
-        if should_sell:
-            return "SELL"
-
-        else:
-            return "Nothing to do"

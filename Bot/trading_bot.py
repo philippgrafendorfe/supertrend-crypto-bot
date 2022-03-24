@@ -15,21 +15,13 @@ log.setLevel(logging.DEBUG)
 
 
 @dataclass
-class TradingBot(ABC):
-    """Trading bot that connects to a crypto exchange and performs a trade."""
-
-    @abstractmethod
-    def run(self, symbol: str) -> None:
-        """Run the trading bot once for a particula symbol with a given strategy."""
-
-
-@dataclass
-class SuperTrendBot(TradingBot):
+class SuperTrendBot:
     exchange: bitpanda
     trading_strategy: SuperTrendTradingStrategy
     depot: Depot
     symbol: str
     taker_fee: float
+    last_base_price: float = 0.0
     in_position: bool = False
 
     def run(self) -> None:
@@ -41,7 +33,7 @@ class SuperTrendBot(TradingBot):
 
         result = self.trading_strategy.check_buy_sell_signals(supertrend_data,
                                                               position=self.in_position,
-                                                              actual_depot_price=self.depot.current_value)
+                                                              last_base_price=self.last_base_price)
 
         self.process_result(result=result)
 
@@ -57,7 +49,7 @@ class SuperTrendBot(TradingBot):
 
     def process_result(self, result):
 
-        if not result in ("BUY", "SELL"):
+        if result not in ("BUY", "SELL"):
             log.info(f"Nothing to do.")
 
         else:
@@ -81,4 +73,5 @@ class SuperTrendBot(TradingBot):
             log.info(f"Last trade fee: {amount - net_amount} €.")
             # todo calculate fees
             self.depot.current_value = net_amount
+            self.last_base_price = price
             self.in_position = result == "BUY"
