@@ -1,5 +1,5 @@
 schedule~=1.1.0
-ccxt~=1.76.60
+ccxt==1.77.5
 pandas~=1.4.1
 numpy==1.22.3
 pydantic~=1.9.0
