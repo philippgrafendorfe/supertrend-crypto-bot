@@ -20,7 +20,6 @@ pd.set_option('display.expand_frame_repr', False)
 
 @hydra.main(config_path="../config", config_name="supertrend")
 def main(cfg: DictConfig):
-    # settings = SupertrendAgentConfig.parse_obj(cfg)
     exchange = ccxt.bitpanda({"apiKey": cfg.exchange.api_key})
 
     log.info(f"Initiating trading bot with trading strategy:")

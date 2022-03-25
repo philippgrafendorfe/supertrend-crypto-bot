@@ -12,11 +12,11 @@ log = logging.getLogger(__name__)
 class TradingStrategy(ABC):
 
     @abstractmethod
-    def should_buy(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
+    def should_buy(self, prices: Union[pd.DataFrame, List[float]]) -> bool:
         """Whether you should buy this coin given the prices."""
 
     @abstractmethod
-    def should_sell(self, prices: Union[pd.DataFrame, List[float]], position: bool) -> bool:
+    def should_sell(self, prices: Union[pd.DataFrame, List[float]]) -> bool:
         """Whether you should sell this coin given the prices."""
 
 
@@ -47,12 +47,9 @@ class MinMaxTradingStrategy(TradingStrategy):
         return prices[-1] > self.max_bound
 
 
-
-
-
 @dataclass
 class ArbitrageTradingStrategy(TradingStrategy):
-    
+
     def should_sell(self, prices: List[float]) -> bool:
         pass
 
