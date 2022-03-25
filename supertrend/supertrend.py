@@ -9,7 +9,7 @@ import pandas as pd
 import schedule
 from Depot.depot import Depot
 from Strategy.SuperTrend import SuperTrendTradingStrategy
-from Agent.trading_bot import SuperTrendAgent
+from Agent.SupertrendAgend import SuperTrendAgent
 from config.config import SupertrendAgentConfig
 
 log = logging.getLogger(__name__)
