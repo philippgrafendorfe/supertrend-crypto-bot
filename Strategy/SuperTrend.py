@@ -49,7 +49,8 @@ class SuperTrendTradingStrategy:
         # return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
-        if not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]:
+        in_uptrend = not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]
+        if in_uptrend:
             log.info("changed to uptrend, buy signal!")
             return True
         else:
@@ -61,9 +62,8 @@ class SuperTrendTradingStrategy:
         # return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
-
-        if prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index] and prices['close'][
-            last_row_index] >= target_depot_price:
+        in_downtrend = prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index]
+        if in_downtrend and prices['close'][last_row_index] >= target_depot_price:
             return True
         else:
             return False

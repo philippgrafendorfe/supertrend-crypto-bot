@@ -3,14 +3,13 @@ import time
 
 import ccxt
 import hydra
-from omegaconf import DictConfig
-
 import pandas as pd
 import schedule
+from omegaconf import DictConfig
+
+from Agent.SupertrendAgend import SuperTrendAgent
 from Depot.depot import Depot
 from Strategy.SuperTrend import SuperTrendTradingStrategy
-from Agent.SupertrendAgend import SuperTrendAgent
-from config.config import SupertrendAgentConfig
 
 log = logging.getLogger(__name__)
 

@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import List, Union
 
 import pandas as pd
-from ccxt import Exchange
 
 log = logging.getLogger(__name__)
 

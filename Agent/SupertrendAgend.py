@@ -1,8 +1,7 @@
-import time
-from datetime import datetime
 import logging
-from abc import abstractmethod, ABC
+import time
 from dataclasses import dataclass
+from datetime import datetime
 
 import pandas as pd
 from ccxt import bitpanda
