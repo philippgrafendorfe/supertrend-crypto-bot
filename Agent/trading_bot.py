@@ -15,7 +15,7 @@ log.setLevel(logging.DEBUG)
 
 
 @dataclass
-class SuperTrendBot:
+class SuperTrendAgent:
     exchange: bitpanda
     trading_strategy: SuperTrendTradingStrategy
     depot: Depot

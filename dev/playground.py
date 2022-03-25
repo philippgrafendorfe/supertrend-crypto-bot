@@ -2,6 +2,15 @@ import ccxt
 import config
 import pprint
 
+class Test:
+    def __init__(self, **kwargs):
+        self.test = kwargs["test"]
+
+
+config = {"test": 1}
+
+test = Test(**config)
+
 
 # exchange_id = 'binance'
 # exchange_class = getattr(ccxt, exchange_id)
