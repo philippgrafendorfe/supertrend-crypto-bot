@@ -72,4 +72,5 @@ class SuperTrendAgent:
             log.info(f"Last trade fee: {amount - net_amount} €.")
             self.depot.current_value = net_amount
             self.last_base_price = price
+            log.warning(f"Bought for {price} EUR; target price: {price * (1 + self.trading_strategy.relative_gain)}")
             self.in_position = result == "BUY"
