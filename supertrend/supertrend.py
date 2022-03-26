@@ -7,7 +7,7 @@ import pandas as pd
 import schedule
 from omegaconf import DictConfig
 
-from Agent.SupertrendAgend import SuperTrendAgent
+from Agent.SupertrendAgent import SuperTrendAgent
 from Depot.depot import Depot
 from Strategy.SuperTrend import SuperTrendTradingStrategy
 
