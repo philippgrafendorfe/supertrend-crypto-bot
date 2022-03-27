@@ -29,7 +29,8 @@ class SuperTrendAgent:
 
         supertrend_data = self.trading_strategy.supertrend(data=df)
         log.info(f"\n {supertrend_data.iloc[-2:].to_string()}")
-
+        last_closing_price = supertrend_data.close.tolist()[-1]
+        log.info(f"Actual market closing price: {last_closing_price} EUR.")
         result = self.trading_strategy.check_buy_sell_signals(supertrend_data,
                                                               position=self.in_position,
                                                               last_base_price=self.last_base_price)
@@ -69,7 +70,7 @@ class SuperTrendAgent:
             log.warning(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
             amount = price * order['amount']
             net_amount = (1 - self.taker_fee) * amount
-            log.info(f"Last trade fee: {amount - net_amount} €.")
+            log.warning(f"Last trade fee: {amount - net_amount} €.")
             self.depot.current_value = net_amount
             self.last_base_price = price
             log.warning(f"Bought for {price} EUR; target price: {price * (1 + self.trading_strategy.relative_gain)}")
