@@ -52,6 +52,5 @@ if __name__ == "__main__":
 # todo get better and more informative bars by changing the smapling method
 # todo check vectorBT for an easier implementation
 # todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
-# todo die config objektorientierter machen
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
 # todo run in docker container
