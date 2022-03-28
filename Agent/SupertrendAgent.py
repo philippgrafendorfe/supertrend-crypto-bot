@@ -1,5 +1,6 @@
 import logging
 import time
+import telegram_send
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -34,7 +35,7 @@ class SuperTrendAgent:
         result = self.trading_strategy.check_buy_sell_signals(supertrend_data,
                                                               position=self.in_position,
                                                               last_base_price=self.last_base_price)
-
+        telegram_send.send(messages=[f"{result} transaction occured!"])
         self.process_result(result=result)
 
     def fetch_bars(self, symbol):
@@ -68,6 +69,7 @@ class SuperTrendAgent:
                 log.info(f"Order with id {order['id']} not yet closed.")
                 time.sleep(30)
             log.warning(f"{result} {order['amount']} of {self.symbol} for {price}: \n {order}")
+            telegram_send.send(messages=[f"{result} transaction occured!"])
             amount = price * order['amount']
             net_amount = (1 - self.taker_fee) * amount
             log.warning(f"Last trade fee: {amount - net_amount} €.")
