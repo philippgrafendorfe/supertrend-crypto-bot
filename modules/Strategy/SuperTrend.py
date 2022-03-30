@@ -46,7 +46,7 @@ class SuperTrendTradingStrategy:
     @staticmethod
     def should_buy(prices: Union[pd.DataFrame, List[float]]) -> bool:
 
-        # return True
+        return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
         in_uptrend = not prices['in_uptrend'][previous_row_index] and prices['in_uptrend'][last_row_index]
@@ -59,7 +59,7 @@ class SuperTrendTradingStrategy:
     @staticmethod
     def should_sell(prices: Union[pd.DataFrame, List[float]], target_depot_price: float) -> bool:
 
-        # return True
+        return True
         last_row_index = len(prices.index) - 1
         previous_row_index = last_row_index - 1
         in_downtrend = prices['in_uptrend'][previous_row_index] and not prices['in_uptrend'][last_row_index]

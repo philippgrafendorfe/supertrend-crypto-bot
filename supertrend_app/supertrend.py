@@ -7,9 +7,9 @@ import pandas as pd
 import schedule
 from omegaconf import DictConfig
 
-from Agent.SupertrendAgent import SuperTrendAgent
-from Depot.depot import Depot
-from Strategy.SuperTrend import SuperTrendTradingStrategy
+from modules.Agent.SupertrendAgent import SuperTrendAgent
+from modules.Depot.depot import Depot
+from modules.Strategy.SuperTrend import SuperTrendTradingStrategy
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.WARNING)
@@ -54,3 +54,7 @@ if __name__ == "__main__":
 # todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
 # todo run in docker container
+# todo ich möchte die Daten über meine Trades direkt aus der trade history haben.
+# todo extend to bitpanda api instead of ccxt
+# todo create a suitable test environment
+# todo make orders, trades and stuff in OOP manner
