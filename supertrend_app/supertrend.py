@@ -46,8 +46,6 @@ def main(cfg: DictConfig):
 if __name__ == "__main__":
     main()
 
-# todo ich will mein Depot verfolgen können. Dafür könnte man den Agent in der Depot schreiben lassen.
-# ein Depot kann sich entwickeln. dazu speichern wir immer den startwert und den aktuellen Wert.
 # todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
 # todo get better and more informative bars by changing the smapling method
 # todo check vectorBT for an easier implementation
@@ -56,5 +54,4 @@ if __name__ == "__main__":
 # todo run in docker container
 # todo ich möchte die Daten über meine Trades direkt aus der trade history haben.
 # todo extend to bitpanda api instead of ccxt
-# todo create a suitable test environment
 # todo make orders, trades and stuff in OOP manner
