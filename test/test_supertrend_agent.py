@@ -23,10 +23,15 @@ class TestSupertrendAgent(unittest.TestCase):
                                    symbol=cfg.symbol,
                                    taker_fee=0.0015)
 
-    def test_process_result(self):
+    def test_buy_process_result(self):
         result = "BUY"
         self.bot.process_result(result=result, test = True)
-        self.assertEqual(True, False)  # add assertion here
+        self.assertEqual(True, self.bot.in_position)  # add assertion here
+
+    def test_sell_process_result(self):
+        result = "SELL"
+        self.bot.process_result(result=result, test = True)
+        self.assertEqual(False, self.bot.in_position)  # add assertion here
 
 
 if __name__ == '__main__':

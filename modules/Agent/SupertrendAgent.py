@@ -9,6 +9,7 @@ from ccxt import bitpanda
 
 from modules.Depot.depot import Depot
 from modules.Strategy.SuperTrend import SuperTrendTradingStrategy
+from modules.utils import catch_exceptions
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -24,6 +25,7 @@ class SuperTrendAgent:
     last_base_price: float = 0.0
     in_position: bool = False
 
+    @catch_exceptions(cancel_on_failure=True)  # the scheduler will cancel the job if the function fails
     def run(self) -> None:
         log.info(f"Fetching new bars for {datetime.now().isoformat()}")
         df = self.fetch_bars(self.symbol)
@@ -61,37 +63,26 @@ class SuperTrendAgent:
             cost = fee["cost"]
             cost_currency = fee["currency"]
 
-        if result == "BUY":
+            price: float = last_closed_order['price']
+            # amount: float = last_closed_order['amount']
 
-            pass
+            if result == "BUY":
+                self.depot.current_value = last_closed_order["cost"] - cost
+                self.last_base_price = price
+                log_message = f"""BUY order filled at price {price} EUR.\n
+                                            Cost: {cost} {cost_currency}. \n
+                                            Depot value: {self.depot.current_value} EUR.\n
+                                            Target Sell Price: {price * (1 + self.trading_strategy.relative_gain)} EUR."""
+            else:
+                self.depot.current_value = last_closed_order["cost"] - cost * price
+                log_message = f"""SELL order filled at price {price} EUR.\n
+                                            Cost: {cost} {cost_currency} = {cost * price} EUR. \n
+                                            Depot value: {self.depot.current_value} EUR.\n"""
 
+            log.warning(log_message)
+            telegram_send.send(messages=[log_message])
 
-        elif result == "SELL":
-            pass
-
-
-        else:
-            pass
-
-        # log.warning(f"{result} {self.symbol}!!!!!!")
-
-        cost_value = cost * last_closed_order["price"]
-        base_value = last_closed_order["price"] * last_closed_order['amount']
-        self.last_base_price = last_closed_order["price"]
-
-        self.depot.current_value = last_closed_order["cost"]
-
-        log_message = f"""{result} {last_closed_order['amount']} of {self.symbol} for {last_closed_order["cost"]} EUR.\n
-                        The exchange rate was {last_closed_order["price"]} EUR.\n
-                        The paid fee was {cost_value} EUR. The fee was calculated in {cost_currency}."""
-
-        log.warning(log_message)
-        telegram_send.send(messages=[log_message])
-
-        log.warning(f"Current Value of the depot: {self.depot.current_value} EUR.")
-        log.warning(
-            f"Bought for {last_closed_order['price']} EUR; target price: {price * (1 + self.trading_strategy.relative_gain)}")
-        self.in_position = result == "BUY"
+            self.in_position = result == "BUY"
 
     def process_order(self, side: str, amount: float, price: float, test: bool = False) -> str:
 
