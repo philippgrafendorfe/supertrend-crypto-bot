@@ -60,12 +60,6 @@ class SuperTrendAgent:
 
         if result in ("SELL", "BUY"):
             closed_order = self.process_order(side=result, amount=base_value, price=price, test=test)
-            fee = closed_order["fee"]
-            cost = fee["cost"]
-            cost_currency = fee["currency"]
-
-            # price: float = closed_order['price']
-            # amount: float = last_closed_order['amount']
 
             if result == "BUY":
                 self.depot.current_value = closed_order.net_value
@@ -77,7 +71,7 @@ class SuperTrendAgent:
             else:
                 self.depot.current_value = closed_order.net_value
                 log_message = f"""SELL order filled at price {price} EUR.\n
-                                            Cost: {cost} {cost_currency} = {cost * price} EUR. \n
+                                            Cost: {closed_order.fee.cost} {closed_order.fee.currency} = {closed_order.fee.cost * closed_order.price} EUR. \n
                                             Depot value: {self.depot.current_value} EUR.\n"""
 
             log.warning(log_message)

@@ -14,5 +14,7 @@ def catch_exceptions(cancel_on_failure=False):
                 print(traceback.format_exc())
                 if cancel_on_failure:
                     return schedule.CancelJob
+
         return wrapper
+
     return catch_exceptions_decorator
