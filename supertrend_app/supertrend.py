@@ -46,12 +46,11 @@ def main(cfg: DictConfig):
 if __name__ == "__main__":
     main()
 
-# todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine komulierte Variable geben für die Ausgaben.
+# todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
+# todo als Anleger möchte ich meine Ausgaben überblicken können. Es muss dazu eine kumulierte Variable geben für die Ausgaben.
 # todo get better and more informative bars by changing the smapling method
 # todo check vectorBT for an easier implementation
-# todo man kann den gesamten verlauf in einem dataframe mittracken und diesen vielleicht abspeichern.
 # todo als Trader möchte ich das depot mit der exchange balance verbinden um sich eine manuelle Überprüfung der Deckung zu sparen.
 # todo run in docker container
 # todo ich möchte die Daten über meine Trades direkt aus der trade history haben.
 # todo extend to bitpanda api instead of ccxt
-# todo make orders, trades and stuff in OOP manner

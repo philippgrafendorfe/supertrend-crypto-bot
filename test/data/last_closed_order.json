@@ -1,0 +1,119 @@
+{
+  "id": "f06d7e0d-8b38-47a2-a004-083a8ae2391b",
+  "clientOrderId": null,
+  "info": {
+    "order": {
+      "order_id": "f06d7e0d-8b38-47a2-a004-083a8ae2391b",
+      "account_holder": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+      "account_id": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+      "instrument_code": "BTC_EUR",
+      "time": "2022-03-28T04:56:26.892401Z",
+      "side": "BUY",
+      "price": "43064.32",
+      "amount": "0.00461",
+      "filled_amount": "0.00461",
+      "type": "MARKET",
+      "sequence": "5367655822",
+      "status": "FILLED_FULLY",
+      "average_price": "43064.32",
+      "is_post_only": false,
+      "order_book_sequence": "788237238",
+      "time_last_updated": "2022-03-28T04:56:27.085936Z",
+      "update_modification_sequence": "788237238"
+    },
+    "trades": [
+      {
+        "fee": {
+          "fee_amount": "0.00000691",
+          "fee_currency": "BTC",
+          "fee_percentage": "0.15",
+          "fee_group_id": "default",
+          "fee_type": "TAKER",
+          "running_trading_volume": "0.05796",
+          "collection_type": "STANDARD"
+        },
+        "trade": {
+          "trade_id": "6e67acde-c6ac-48fe-82b2-b3cbf5b03b46",
+          "order_id": "f06d7e0d-8b38-47a2-a004-083a8ae2391b",
+          "account_holder": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+          "account_id": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+          "amount": "0.00461",
+          "side": "BUY",
+          "instrument_code": "BTC_EUR",
+          "price": "43064.32",
+          "time": "2022-03-28T04:56:26.997801Z",
+          "price_tick_sequence": "0",
+          "sequence": "5367655822"
+        }
+      }
+    ]
+  },
+  "timestamp": 1648443386892,
+  "datetime": "2022-03-28T04:56:26.892Z",
+  "lastTradeTimestamp": 1648443386997,
+  "symbol": "BTC/EUR",
+  "type": "market",
+  "timeInForce": "IOC",
+  "postOnly": false,
+  "side": "buy",
+  "price": 43064.32,
+  "stopPrice": null,
+  "amount": 0.00461,
+  "cost": 198.5265152,
+  "average": 43064.32,
+  "filled": 0.00461,
+  "remaining": 0.0,
+  "status": "closed",
+  "trades": [
+    {
+      "id": "6e67acde-c6ac-48fe-82b2-b3cbf5b03b46",
+      "order": "f06d7e0d-8b38-47a2-a004-083a8ae2391b",
+      "timestamp": 1648443386997,
+      "datetime": "2022-03-28T04:56:26.997Z",
+      "symbol": "BTC/EUR",
+      "type": "market",
+      "side": "buy",
+      "price": 43064.32,
+      "amount": 0.00461,
+      "cost": 198.5265152,
+      "takerOrMaker": "taker",
+      "fee": {
+        "cost": 6.91e-06,
+        "currency": "BTC",
+        "rate": 0.15
+      },
+      "info": {
+        "trade_id": "6e67acde-c6ac-48fe-82b2-b3cbf5b03b46",
+        "order_id": "f06d7e0d-8b38-47a2-a004-083a8ae2391b",
+        "account_holder": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+        "account_id": "0c206e58-89fe-4cd9-b601-a0ad1fbc8a35",
+        "amount": "0.00461",
+        "side": "BUY",
+        "instrument_code": "BTC_EUR",
+        "price": "43064.32",
+        "time": "2022-03-28T04:56:26.997801Z",
+        "price_tick_sequence": "0",
+        "sequence": "5367655822"
+      },
+      "fees": [
+        {
+          "currency": "BTC",
+          "cost": "0.00000691",
+          "rate": "0.15"
+        }
+      ]
+    }
+  ],
+  "fees": [
+    {
+      "currency": "BTC",
+      "cost": 6.91e-06,
+      "rate": 0.15
+    }
+  ],
+  "fee": {
+    "currency": "BTC",
+    "cost": 6.91e-06,
+    "rate": 0.15
+  }
+}

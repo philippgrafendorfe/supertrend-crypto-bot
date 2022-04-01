@@ -97,7 +97,7 @@ class SuperTrendAgent:
                 log.warning(f"Order with id {order['id']} not yet closed.")
                 time.sleep(30)
 
-        last_closed_order = self.exchange.fetch_closed_orders(symbol=self.symbol)[-1]
+        last_closed_order = self.exchange.fetch_closed_orders(symbol=self.symbol)[-2]
         last_id = last_closed_order["id"]
         if not test:
             assert last_id == order["id"]
