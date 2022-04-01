@@ -8,6 +8,7 @@ import pandas as pd
 from ccxt import bitpanda
 
 from modules.Depot.depot import Depot
+from modules.Order.Order import Order
 from modules.Strategy.SuperTrend import SuperTrendTradingStrategy
 from modules.utils import catch_exceptions
 
@@ -25,7 +26,7 @@ class SuperTrendAgent:
     last_base_price: float = 0.0
     in_position: bool = False
 
-    @catch_exceptions(cancel_on_failure=True)  # the scheduler will cancel the job if the function fails
+    @catch_exceptions(cancel_on_failure=False)  # the scheduler will cancel the job if the function fails
     def run(self) -> None:
         log.info(f"Fetching new bars for {datetime.now().isoformat()}")
         df = self.fetch_bars(self.symbol)
@@ -58,23 +59,23 @@ class SuperTrendAgent:
         base_value = self.depot.current_value / price
 
         if result in ("SELL", "BUY"):
-            last_closed_order = self.process_order(side=result, amount=base_value, price=price, test=test)
-            fee = last_closed_order["fee"]
+            closed_order = self.process_order(side=result, amount=base_value, price=price, test=test)
+            fee = closed_order["fee"]
             cost = fee["cost"]
             cost_currency = fee["currency"]
 
-            price: float = last_closed_order['price']
+            # price: float = closed_order['price']
             # amount: float = last_closed_order['amount']
 
             if result == "BUY":
-                self.depot.current_value = last_closed_order["cost"] - cost
-                self.last_base_price = price
+                self.depot.current_value = closed_order.net_value
+                self.last_base_price = closed_order.price
                 log_message = f"""BUY order filled at price {price} EUR.\n
-                                            Cost: {cost} {cost_currency}. \n
+                                            Cost: {closed_order.fee.cost} {closed_order.fee.currency}. \n
                                             Depot value: {self.depot.current_value} EUR.\n
-                                            Target Sell Price: {price * (1 + self.trading_strategy.relative_gain)} EUR."""
+                                            Target Sell Price: {closed_order.price * (1 + self.trading_strategy.relative_gain)} EUR."""
             else:
-                self.depot.current_value = last_closed_order["cost"] - cost * price
+                self.depot.current_value = closed_order.net_value
                 log_message = f"""SELL order filled at price {price} EUR.\n
                                             Cost: {cost} {cost_currency} = {cost * price} EUR. \n
                                             Depot value: {self.depot.current_value} EUR.\n"""
@@ -84,22 +85,25 @@ class SuperTrendAgent:
 
             self.in_position = result == "BUY"
 
-    def process_order(self, side: str, amount: float, price: float, test: bool = False) -> str:
+    def process_order(self, side: str, amount: float, price: float, test: bool = False) -> Order:
 
         if not test:
-            order = self.exchange.create_order(symbol=self.symbol,
-                                               type="limit",
-                                               side=side,
-                                               amount=amount,
-                                               price=price)
+            order = Order.from_dict(
+                self.exchange.create_order(
+                    symbol=self.symbol,
+                    type="limit",
+                    side=side,
+                    amount=amount,
+                    price=price)
+            )
             time.sleep(30)
-            while self.exchange.fetch_order_status(id=order["id"]) != "closed":
-                log.warning(f"Order with id {order['id']} not yet closed.")
+            while self.exchange.fetch_order_status(id=order.id) != "closed":
+                log.warning(f"Order with id {order.id} not yet closed.")
                 time.sleep(30)
 
-        last_closed_order = self.exchange.fetch_closed_orders(symbol=self.symbol)[-2]
-        last_id = last_closed_order["id"]
+        last_closed_order = Order.from_dict(self.exchange.fetch_closed_orders(symbol=self.symbol)[-2])
+        last_id = last_closed_order.id
         if not test:
-            assert last_id == order["id"]
+            assert last_id == order.id
 
         return last_closed_order

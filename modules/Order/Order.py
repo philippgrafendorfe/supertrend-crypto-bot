@@ -33,3 +33,11 @@ class Order:
     remaining: float
     status: str  # todo implement as enum
     fee: Fee
+
+    @property
+    def gross_value(self):
+        return self.amount * self.price
+
+    @property
+    def net_value(self):
+        return self.gross_value * (1 - self.fee.rate / 100)
