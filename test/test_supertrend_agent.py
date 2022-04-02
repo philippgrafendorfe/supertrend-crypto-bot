@@ -3,8 +3,8 @@ import pandas as pd
 import ccxt
 from hydra import initialize, compose
 
-from modules.Agent.SupertrendAgent import SuperTrendAgent
-from modules.Depot.depot import Depot
+from modules.SupertrendAgent import SuperTrendAgent
+from modules.Depot import Depot
 from modules.Strategy.SuperTrend import SuperTrendTradingStrategy
 from pathlib import Path
 

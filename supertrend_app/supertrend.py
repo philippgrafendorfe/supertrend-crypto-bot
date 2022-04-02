@@ -7,12 +7,12 @@ import pandas as pd
 import schedule
 from omegaconf import DictConfig
 
-from modules.Agent.SupertrendAgent import SuperTrendAgent
-from modules.Depot.depot import Depot
+from modules.SupertrendAgent import SuperTrendAgent
+from modules.Depot import Depot
 from modules.Strategy.SuperTrend import SuperTrendTradingStrategy
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.WARNING)
+log.setLevel(logging.INFO)
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -34,7 +34,7 @@ def main(cfg: DictConfig):
                           symbol=cfg.symbol,
                           taker_fee=0.0015)
 
-    log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period}. Timeframe: minutes.")
+    log.info(f"Schedule with symbol {cfg.symbol}. Run period: {cfg.bot_run_period} minutes.")
     bot.run()
     schedule.every(cfg.bot_run_period).minutes.do(bot.run)
 
@@ -54,3 +54,4 @@ if __name__ == "__main__":
 # todo run in docker container
 # todo ich möchte die Daten über meine Trades direkt aus der trade history haben.
 # todo extend to bitpanda api instead of ccxt
+# todo als Trader möchte ich jeden Gain mitnehmen.-> die Feekosten müssten gedeckt sein.

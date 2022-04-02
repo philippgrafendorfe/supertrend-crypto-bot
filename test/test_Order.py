@@ -2,7 +2,7 @@ import json
 import unittest
 
 from pathlib import Path
-from modules.Order.Order import Order
+from modules.Order import Order
 
 
 class TestOrder(unittest.TestCase):
