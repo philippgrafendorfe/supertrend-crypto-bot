@@ -55,3 +55,4 @@ if __name__ == "__main__":
 # todo ich möchte die Daten über meine Trades direkt aus der trade history haben.
 # todo extend to bitpanda api instead of ccxt
 # todo als Trader möchte ich jeden Gain mitnehmen.-> die Feekosten müssten gedeckt sein.
+# todo change request method to websocket

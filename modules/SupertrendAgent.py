@@ -72,15 +72,15 @@ class SuperTrendAgent:
                 self.depot.current_value = closed_order.net_value
                 self.last_base_price = closed_order.price
                 log_message = f"""
-                BUY order filled at price {price} EUR.\n
-                Cost: {closed_order.fee.cost} {closed_order.fee.currency}. \n
-                Depot value: {self.depot.current_value} EUR.\n
+                BUY order filled at price {price} EUR.
+                Cost: {closed_order.fee.cost} {closed_order.fee.currency}.
+                Depot value: {self.depot.current_value} EUR.
                 Target Sell Price: {closed_order.price * (1 + self.trading_strategy.relative_gain)} EUR."""
             else:
                 self.depot.current_value = closed_order.net_value
                 log_message = f"""
-                SELL order filled at price {price} EUR.\n
-                Cost: {closed_order.fee.cost} {closed_order.fee.currency} = {closed_order.fee.cost * closed_order.price} EUR. \n
+                SELL order filled at price {price} EUR.
+                Cost: {closed_order.fee.cost} {closed_order.fee.currency} = {closed_order.fee.cost * closed_order.price} EUR.
                 Depot value: {self.depot.current_value} EUR."""
 
             log.warning(log_message)
@@ -90,18 +90,16 @@ class SuperTrendAgent:
 
     def process_order(self, side: str, amount: float, price: float) -> Order:
 
-        order = Order.from_dict(
-            self.exchange.create_order(
+        order = self.exchange.create_order(
                 symbol=self.symbol,
                 type="limit",
                 side=side,
                 amount=amount,
                 price=price
             )
-        )
         time.sleep(30)
-        while self.exchange.fetch_order_status(id=order.id) != "closed":
-            log.warning(f"Order with id {order.id} not yet closed.")
+        while self.exchange.fetch_order_status(id=order.get("id", None)) != "closed":
+            log.warning(f"Order with id {order.get('id', None)} not yet closed.")
             time.sleep(30)
 
         closed_or_cancelled_orders = self.exchange.fetch_closed_orders(symbol=self.symbol)
@@ -109,6 +107,6 @@ class SuperTrendAgent:
         last_closed_order = Order.from_dict(closed_orders[-1])
 
         last_id = last_closed_order.id
-        assert last_id == order.id
+        assert last_id == order.get("id", None)
 
         return last_closed_order
